@@ -58,3 +58,10 @@ test/*
 
 dist/*
 singa_auto.egg-info/*
+
+.bash_history
+.python_history
+.viminfo
+dockerfiles/scripts
+dockerfiles/singa_auto/
+singa_auto/gemini

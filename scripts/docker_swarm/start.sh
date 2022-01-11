@@ -98,8 +98,12 @@ start_admin()
         -e LOGS_DIR_PATH=$LOGS_DIR_PATH \
         -e APP_MODE=$APP_MODE \
         -e CONTAINER_MODE=$CONTAINER_MODE \
+        -e GEMINI_HOME=/root/singa_auto/gemini \
+        -e GEMINI_PIPELINE=/root/singa_auto/gemini/gemini-pipeline \
         -v /var/run/docker.sock:/var/run/docker.sock \
         $VOLUME_MOUNTS \
+        -v /hdd8/zhulei:/hdd8/zhulei \
+        -v /home/zhulei:/home/zhulei \
         -p $ADMIN_EXT_PORT:$ADMIN_PORT \
         $SINGA_AUTO_IMAGE_ADMIN:$SINGA_AUTO_VERSION \
         &> $LOG_FILE_PATH) &
@@ -128,6 +132,20 @@ start_db()
           &> $LOG_FILE_PATH) &
 
         echo "Creating SINGA-Auto's PostgreSQL database & user..."
+
+        # create user first
+        for val in {1..6}
+        do
+            docker exec $POSTGRES_HOST psql -U postgres -c "CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD'"
+            if [ $? -eq 0 ]; then
+                echo "SINGA-Auto's DB create user successful"
+                break
+            else
+                echo "retry creating user $val"
+                sleep 5
+            fi
+        done
+
         # try 6 times
         for val in {1..6}
         do
@@ -141,17 +159,7 @@ start_db()
             fi
         done
 
-        for val in {1..6}
-        do
-            docker exec $POSTGRES_HOST psql -U postgres -c "CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD'"
-            if [ $? -eq 0 ]; then
-                echo "SINGA-Auto's DB create user successful"
-                break
-            else
-                echo "retry creating user $val"
-                sleep 5
-            fi
-        done
+
 }
 
 start_kafka()

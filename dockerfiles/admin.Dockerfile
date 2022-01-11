@@ -19,7 +19,6 @@
 
 FROM ubuntu:16.04
 
-
 # Install conda with pip and python 3.6
 ARG CONDA_ENVIORNMENT
 RUN apt-get update --fix-missing && apt-get -y upgrade && apt-get install -y \
@@ -39,6 +38,9 @@ RUN mkdir -p $DOCKER_WORKDIR_PATH
 WORKDIR $DOCKER_WORKDIR_PATH
 ENV PYTHONPATH $DOCKER_WORKDIR_PATH
 
+RUN apt-get update && apt-get install -y iputils-ping
+RUN apt-get update && apt-get install -y vim
+
 # Install python dependencies
 COPY singa_auto/ singa_auto/
 RUN pip install -r singa_auto/requirements.txt
@@ -46,6 +48,7 @@ RUN pip install -r singa_auto/utils/requirements.txt
 RUN pip install -r singa_auto/meta_store/requirements.txt
 RUN pip install -r singa_auto/container/requirements.txt
 RUN pip install -r singa_auto/admin/requirements.txt
+RUN pip install -r singa_auto/gemini/requirements.txt
 
 COPY scripts/ scripts/
 

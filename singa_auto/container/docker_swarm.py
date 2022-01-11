@@ -204,9 +204,10 @@ class DockerSwarmContainerManager(ContainerManager):
         spec = docker_node.attrs.get('Spec', {})
         spec_labels = spec.get('Labels', {})
         available_gpus_str = spec_labels.get(self._label_available_gpus, '')
-        available_gpus = [
-            int(x) for x in available_gpus_str.split(',') if len(x) > 0
-        ]
+        # available_gpus = [
+        #     int(x) for x in available_gpus_str.split(',') if len(x) > 0
+        # ]
+        available_gpus = [0,1]
         num_services = int(spec_labels.get(self._label_num_services, 0))
         return _Node(docker_node.id, available_gpus, num_services)
 

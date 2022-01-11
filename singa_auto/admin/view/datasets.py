@@ -37,7 +37,7 @@ def create_dataset(auth, params):
         if 'dataset' in request.files:
             # Save dataset data in request body
             file_storage = request.files['dataset']
-            file_storage.save(f.name)
+            file_storage.save(f.name+'.zip')
             file_storage.close()
         else:
             # Download dataset at URL and save it
@@ -46,7 +46,7 @@ def create_dataset(auth, params):
             f.write(r.content)
             del params['dataset_url']
 
-        params['data_file_path'] = f.name
+        params['data_file_path'] = f.name + '.zip'
 
         with admin:
             return jsonify(admin.create_dataset(user_id=auth['user_id'], name=params['name'],
